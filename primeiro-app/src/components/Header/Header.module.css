@@ -1,0 +1,19 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    background-color: orange;
+    padding:15px;
+}
+
+.title{
+    text-transform: uppercase;
+}
+
+.menuBar ul{
+    display: flex;
+}
+
+.menuBar li {
+    list-style: none;
+    margin:5px;
+}
