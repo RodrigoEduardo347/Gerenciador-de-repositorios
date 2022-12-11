@@ -1,49 +1,49 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Container, Form, SubmitButton, List, DeleteButton } from './style';
-import { FaGithub, FaPlus, FaSpinner, FaBars, FaTrash } from 'react-icons/fa';
+import { Container } from './style';
+import { FaGithub } from 'react-icons/fa';
 import { api } from '../../services/api';
+import RepoForm from '../../components/Main/RepoForm/RepoForm';
+import ListOfRepositories from '../../components/Main/ListOfRepositories/ListOfRepositories';
 
 export default function Main() {
 
     const [newRepo, setNewRepo] = useState('');
     const [repositorios, setRepositorios] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [alert, setAlert] = useState(null);
+    const [alert, setAlert] = useState(false);
 
-    useEffect(()=>{
+    useEffect(() => {
         let data = localStorage.getItem('repo');
-        
-        if(data){
+
+        if (data) {
             setRepositorios(JSON.parse(data));
         }
-        
 
-    },[]);
+    }, []);
 
-    useEffect(()=> {
+    useEffect(() => {
         localStorage.setItem('repo', JSON.stringify(repositorios));
     }, [repositorios]);
 
     function handleChangeInput(e) {
-        setAlert(null);
+        setAlert(false);
         setNewRepo(e.target.value);
     }
 
     const handleSubmit = useCallback((e) => {
         e.preventDefault();
-        setAlert(null);
+        setAlert(false);
 
         async function submit() {
             try {
 
-                if(newRepo === ''){
+                if (newRepo === '') {
                     throw new Error("Você precisa indicar um repositório!");
                 }
 
                 const hasRepo = repositorios.find(repo => repo === newRepo);
 
-                if(hasRepo){
+                if (hasRepo) {
                     throw new Error("Repositório duplicado!");
                 }
 
@@ -79,37 +79,16 @@ export default function Main() {
                     Meus repositórios
                 </h1>
 
-                <Form onSubmit={handleSubmit} error={alert}>
+                <RepoForm
+                    handleSubmit={handleSubmit}
+                    handleChangeInput={handleChangeInput}
+                    newRepo={newRepo}
+                    alert={alert}
+                    loading={loading}
+                />
 
-                    <input
-                        type="text"
-                        onChange={handleChangeInput}
-                        value={newRepo}
-                    />
-                    <SubmitButton loading={loading ? 1 : 0}>
-                        {loading ? (
-                            <FaSpinner color="#FFF" size={14} />
-                        ) : (
-                            <FaPlus color="#FFF" size={14} />
-                        )}
-                    </SubmitButton>
-                </Form>
+                <ListOfRepositories repositorios={repositorios} handleDelete={handleDelete} />
 
-                <List >
-                    {repositorios.map(repo => (
-                        <li key={repo}>
-                            <span>{repo}</span>
-                            <span>
-                                <Link to={`repositorio/${encodeURIComponent(repo)}`}>
-                                    <FaBars size={20} />
-                                </Link>
-                                <DeleteButton onClick={() => handleDelete(repo)}>
-                                    <FaTrash size={20} />
-                                </DeleteButton>
-                            </span>
-                        </li>
-                    ))}
-                </List>
             </Container>
         </>
     )

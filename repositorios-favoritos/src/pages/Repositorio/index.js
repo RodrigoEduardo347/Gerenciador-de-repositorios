@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { BackButton, Container, Owner, IssuesList, PageActions, FilterList } from "./style";
+import AboutIssues from "../../components/Repositorio/AboutIssues/AboutIssues";
 import { api } from '../../services/api'
 import Loading from "../../components/loading/Loading";
-import { FaArrowLeft } from "react-icons/fa";
 
 export default function Repositorio() {
 
@@ -39,14 +38,6 @@ export default function Repositorio() {
         load();
     }, [repositorio]);
 
-    function handlePage(action) {
-        setPage(action === 'back' ? page - 1 : page + 1)
-    }
-
-    function handleFilter(index) {
-        setFilterIndex(index);
-    }
-
     useEffect(() => {
         async function loadIssue() {
             const response = await api.get(`repos/${repositorio}/issues`, {
@@ -61,7 +52,7 @@ export default function Repositorio() {
 
         loadIssue();
 
-    }, [filters, filterIndex, page]);
+    }, [repositorio, filters, filterIndex, page]);
 
     if (loading) {
         return (
@@ -72,72 +63,15 @@ export default function Repositorio() {
     } else {
         return (
             <>
-                <Container>
-                    <BackButton to="/">
-                        <FaArrowLeft color='#000' size={30} />
-                    </BackButton>
-
-                    <Owner>
-                        <img
-                            src={repositorioAtual.owner.avatar_url}
-                            alt={repositorioAtual.owner.login}
-                        />
-                        <h1>{repositorioAtual.name}</h1>
-                        <p>{repositorioAtual.description}</p>
-                    </Owner>
-
-                    <FilterList active={filterIndex}>
-                        {filters.map((filter, index) => (
-                            <button
-                                type="button"
-                                key={filter.label}
-                                onClick={() => handleFilter(index)}
-                            >
-                                {filter.label}
-                            </button>
-                        ))}
-                    </FilterList>
-
-                    <IssuesList>
-                        {issues.map(issue => (
-                            <li key={String(issue.id)}>
-                                <img src={issue.user.avatar_url} alt={issue.user.login} />
-
-                                <div>
-                                    <strong>
-                                        <a href={issue.html_url}>{issue.title}</a>
-
-                                        {issue.labels.map(label => (
-                                            <span key={String(label.id)}>{label.name}</span>
-                                        ))}
-
-                                    </strong>
-
-                                    <p>{issue.user.login}</p>
-
-                                </div>
-
-                            </li>
-                        ))}
-                    </IssuesList>
-
-                    <PageActions>
-                        <button
-                            type="button"
-                            onClick={() => handlePage("back")}
-                            disabled={page < 2}
-                        >
-                            Voltar
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={() => handlePage("next")}
-                        >
-                            Próxima
-                        </button>
-                    </PageActions>
-                </Container>
+                <AboutIssues 
+                    repositorioAtual={repositorioAtual}
+                    issues={issues}
+                    filterIndex={filterIndex}
+                    setFilterIndex={setFilterIndex}
+                    filters={filters}
+                    page={page}
+                    setPage={setPage}
+                />
             </>
         )
     }
