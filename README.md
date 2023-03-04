@@ -24,9 +24,8 @@ Para usar o sistema, é bem simples! Basta digitar o nome do "```Dono do Reposit
 ## Como visualizar a página? 
 - ### Clone o repositório:
 ```html
-    git clone https://github.com/RodrigoEduardo347/React.git
+    git clone https://github.com/RodrigoEduardo347/Gerenciador-de-repositorios
 ```
-- #### Acesse a pasta: ```repositorios-favoritos```
 - #### Abra o terminal no local e execute o comando:
 ```html
     npm start
